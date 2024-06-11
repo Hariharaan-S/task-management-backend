@@ -42,7 +42,11 @@ const PastTask = new mongoose.model('pasttask', PastTaskSchema)
 const app = express();
 const handler = ServerlessHttp(app)
 
-app.use(cors({ origin: "https://main--curious-lily-c62daa.netlify.app/" }));
+app.use(cors({
+    origin: 'https://main--curious-lily-c62daa.netlify.app',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 app.use(bodyParser.json())
 
