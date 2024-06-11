@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 import ServerlessHttp from 'serverless-http'
 
-mongoose.connect("mongodb://localhost:27017/taskmanagement")
+mongoose.connect(process.env.MONGO_DB_CLIENT + "taskmanagement")
 
 const ProfileSchema = new mongoose.Schema(
     {
