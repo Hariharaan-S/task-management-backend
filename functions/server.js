@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors'
 import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
+import ServerlessHttp from 'serverless-http'
 
 mongoose.connect("mongodb://localhost:27017/taskmanagement")
 
@@ -39,6 +40,7 @@ const Profile = new mongoose.model('profile', ProfileSchema)
 const Task = new mongoose.model('task', TaskSchema)
 const PastTask = new mongoose.model('pasttask', PastTaskSchema)
 const app = express();
+const handler = ServerlessHttp(app)
 
 app.use(cors());
 
@@ -129,9 +131,16 @@ app.delete('/delete/task', async (req, res) => {
     res.status(200).send('Deleted!')
 })
 
+app.get('/.netlify/functions/server', (req, res) => { })
+
 
 const PORT = 5000 || process.env.PORT
 
 app.listen(PORT, () => {
     console.log('Server running at port 5000')
 })
+
+module.exports.handler = async (event, context) => {
+    const result = await handler(event, context);
+    return result;
+}
