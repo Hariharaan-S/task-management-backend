@@ -1,34 +1,36 @@
-TaskFlow Backend
+# TaskFlow Backend
+
 This is the backend service for the TaskFlow task management application, powered by Node.js and MongoDB. It provides RESTful APIs to create, edit, and delete tasks.
 
-Installation
-Clone the repository:
+## Installation
 
-bash
-Copy code
-git clone https://github.com/Hariharaan-S/task-management-backend.git
-cd taskflow-backend
-Install the dependencies:
+1. **Clone the repository:**
+    ```bash
+    git clone https://github.com/Hariharaan-S/task-management-backend.git
+    cd task-management-backend
+    ```
 
-bash
-Copy code
-npm install
-Set up environment variables:
+2. **Install the dependencies:**
+    ```bash
+    npm install
+    ```
 
-Create a .env file in the root directory of the project and add the following variables:
+3. **Set up environment variables:**
 
-plaintext
-Copy code
-MONGO_URI=your_mongodb_connection_string
-PORT=your_desired_port
-Build the server:
+    Create a `.env` file in the root directory of the project and add the following variables:
+    ```plaintext
+    MONGO_URI=your_mongodb_connection_string
+    PORT=your_desired_port
+    ```
 
-bash
-Copy code
-npm run build
-Start the server:
+4. **Build the server:**
+    ```bash
+    npm run build
+    ```
 
-bash
-Copy code
-npm start
-The server should now be running on the port specified in your .env file.
+5. **Start the server:**
+    ```bash
+    npm start
+    ```
+
+The server should now be running on the port specified in your `.env` file.
