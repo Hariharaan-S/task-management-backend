@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { Router } from 'express'
 import bodyParser from 'body-parser';
 import cors from 'cors'
 import mongoose from 'mongoose';
@@ -40,17 +40,19 @@ const Profile = new mongoose.model('profile', ProfileSchema)
 const Task = new mongoose.model('task', TaskSchema)
 const PastTask = new mongoose.model('pasttask', PastTaskSchema)
 const app = express();
-const handler = ServerlessHttp(app)
 
-app.use(cors({
+const router = Router();
+
+router.use(cors({
     origin: 'https://main--curious-lily-c62daa.netlify.app',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(bodyParser.json())
+app.use('/.netlify/functions/', router)
 
-app.post('/auth/register', (req, res) => {
+router.post('/auth/register', (req, res) => {
     var profile = req.body
     const newId = uuidv4()
     profile = { ...profile, id: newId }
@@ -59,7 +61,7 @@ app.post('/auth/register', (req, res) => {
     res.status(200).json(profile);
 })
 
-app.post('/auth/login', async (req, res) => {
+router.post('/auth/login', async (req, res) => {
     const profile = req.body;
     const p = await Profile.findOne({ email: profile.email })
     if (p === null) res.status(401)
@@ -70,13 +72,13 @@ app.post('/auth/login', async (req, res) => {
     }
 })
 
-app.post('/get/tasks', async (req, res) => {
+router.post('/get/tasks', async (req, res) => {
     const user = req.body;
     const tasks = await Task.find({ u_id: user.id })
     res.status(200).send({ message: tasks })
 })
 
-app.post('/past', async (req, res) => {
+router.post('/past', async (req, res) => {
     const payload = req.body.payload;
     const tasks = await PastTask.findOne({ u_id: payload.id })
     if (!tasks) {
@@ -89,7 +91,7 @@ app.post('/past', async (req, res) => {
 
 })
 
-app.post('/get/pasttasks', async (req, res) => {
+router.post('/get/pasttasks', async (req, res) => {
     const user = req.body;
     console.log(user)
     const tasks = await PastTask.find({ u_id: user.id })
@@ -100,7 +102,7 @@ app.post('/get/pasttasks', async (req, res) => {
         res.status(301)
 })
 
-app.post('/create-task', (req, res) => {
+router.post('/create-task', (req, res) => {
     const body = req.body;
     const newDate = body.date.split('T')[0]
     console.log(newDate)
@@ -117,7 +119,7 @@ app.post('/create-task', (req, res) => {
     res.status(200);
     res.send({ message: "success" })
 })
-app.patch('/edit/task', async (req, res) => {
+router.patch('/edit/task', async (req, res) => {
     const body = req.body;
     const changedDate = new Date(body.due_date).getTime()
     const prevTask = await Task.updateOne({ task_id: body.id }, {
@@ -129,14 +131,11 @@ app.patch('/edit/task', async (req, res) => {
     res.status(200).send("received!")
 })
 
-app.delete('/delete/task', async (req, res) => {
+router.delete('/delete/task', async (req, res) => {
     const body = req.body;
     await Task.deleteOne({ task_id: body.id })
     res.status(200).send('Deleted!')
 })
-
-app.get('/.netlify/functions/server', (req, res) => { })
-
 
 const PORT = 5000 || process.env.PORT
 
@@ -144,7 +143,4 @@ app.listen(PORT, () => {
     console.log('Server running at port 5000')
 })
 
-module.exports.handler = async (event, context) => {
-    const result = await handler(event, context);
-    return result;
-}
+export const handler = ServerlessHttp(app)
