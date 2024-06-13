@@ -4,7 +4,7 @@ import cors from 'cors'
 import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 
-mongoose.connect(process.env.MONGO_DB_CLIENT + "taskmanagement")
+mongoose.connect('mongodb://localhost:27017/taskmanagement')
 
 const ProfileSchema = new mongoose.Schema(
     {
@@ -41,9 +41,7 @@ const PastTask = new mongoose.model('pasttask', PastTaskSchema)
 const app = express();
 
 app.use(cors({
-    origin: 'https://main--curious-lily-c62daa.netlify.app',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    origin: '*',
 }));
 
 app.use(bodyParser.json())
@@ -60,8 +58,8 @@ app.post('/auth/register', (req, res) => {
 app.post('/auth/login', async (req, res) => {
     const profile = req.body;
     const p = await Profile.findOne({ email: profile.email })
-    if (p === null) res.status(401)
-    if (p.password !== profile.password) {
+    if (p === null) res.status(401).json({ message: "No such account" });
+    else if (p.password !== profile.password) {
         res.status(401).send('Wrong Password')
     } else {
         res.status(200).json(p)
@@ -89,9 +87,7 @@ app.post('/past', async (req, res) => {
 
 app.post('/get/pasttasks', async (req, res) => {
     const user = req.body;
-    console.log(user)
     const tasks = await PastTask.find({ u_id: user.id })
-    console.log(tasks)
     if (tasks)
         res.status(200).send({ message: tasks })
     else
@@ -101,7 +97,6 @@ app.post('/get/pasttasks', async (req, res) => {
 app.post('/create-task', (req, res) => {
     const body = req.body;
     const newDate = body.date.split('T')[0]
-    console.log(newDate)
     const changedDate = new Date(newDate).getTime()
     const newId = uuidv4()
     const newTask = new Task({
@@ -117,13 +112,13 @@ app.post('/create-task', (req, res) => {
 })
 app.patch('/edit/task', async (req, res) => {
     const body = req.body;
+    console.log(body.due_date)
     const changedDate = new Date(body.due_date).getTime()
-    const prevTask = await Task.updateOne({ task_id: body.id }, {
+    const prevTask = await Task.updateOne({ task_id: body.task_id }, {
         title: body.title,
         description: body.description,
         due_date: changedDate
     })
-    console.log(prevTask.modifiedCount)
     res.status(200).send("received!")
 })
 
