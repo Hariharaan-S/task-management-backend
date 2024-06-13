@@ -41,7 +41,7 @@ const PastTask = new mongoose.model('pasttask', PastTaskSchema)
 const app = express();
 
 app.use(cors({
-    origin: ['https://main--curious-lily-c62daa.netlify.app'],
+    origin: 'https://main--curious-lily-c62daa.netlify.app',
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
 }));
 
