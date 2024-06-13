@@ -4,7 +4,7 @@ import cors from 'cors'
 import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 
-mongoose.connect('mongodb://localhost:27017/taskmanagement')
+mongoose.connect(process.env.MONGO_DB_CLIENT + 'taskmanagement');
 
 const ProfileSchema = new mongoose.Schema(
     {
@@ -41,7 +41,8 @@ const PastTask = new mongoose.model('pasttask', PastTaskSchema)
 const app = express();
 
 app.use(cors({
-    origin: '*',
+    origin: ['https://main--curious-lily-c62daa.netlify.app'],
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
 }));
 
 app.use(bodyParser.json())
