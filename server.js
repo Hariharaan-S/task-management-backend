@@ -3,8 +3,9 @@ import bodyParser from 'body-parser';
 import cors from 'cors'
 import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
+import 'dotenv/config'
 
-mongoose.connect(process.env.MONGO_DB_CLIENT + 'taskmanagement');
+mongoose.connect(process.env.MONGO_DB_CLIENT);
 
 const ProfileSchema = new mongoose.Schema(
     {
@@ -41,7 +42,7 @@ const PastTask = new mongoose.model('pasttask', PastTaskSchema)
 const app = express();
 
 app.use(cors({
-    origin: 'https://main--curious-lily-c62daa.netlify.app',
+    origin: ['https://main--curious-lily-c62daa.netlify.app', 'http://localhost:3000'],
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
 }));
 
